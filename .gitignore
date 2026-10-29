@@ -1,4 +1,4 @@
-# Visual Studio / .NET
+# ---------- .NET / Visual Studio
 .vs/
 bin/
 obj/
@@ -6,8 +6,21 @@ obj/
 *.suo
 TestResults/
 
-# Nunca versionar segredos (connection string do banco, chaves)
+# ---------- Node (web e mobile)
+node_modules/
+dist/
+.expo/
+web-build/
+npm-debug.*
+*.log
+
+# ---------- Segredos: nunca versionar
+.env
 appsettings.Development.json
 appsettings.Local.json
 secrets.json
 *.pfx
+
+# ---------- Sistema
+.DS_Store
+Thumbs.db

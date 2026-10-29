@@ -1,0 +1,77 @@
+# =====================================================================
+# Integração contínua (CI): a cada push ou pull request na main,
+# o GitHub compila e testa todas as partes do sistema.
+# =====================================================================
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend:
+    name: Back-end (.NET) - build e testes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Compilar a API
+        run: dotnet build backend/AprenderMais.Api/AprenderMais.Api.csproj -c Release
+      - name: Rodar os testes
+        run: dotnet test backend/AprenderMais.Testes/AprenderMais.Testes.csproj -c Release
+
+  desktop:
+    name: Desktop (Windows Forms) - build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet build backend/AprenderMais.Desktop/AprenderMais.Desktop.csproj -c Release
+
+  web:
+    name: Web (React) - lint e build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  mobile:
+    name: Mobile (Expo) - verificação do bundle
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: npm ci
+      - run: npx expo export --platform web --output-dir dist
+
+  docker:
+    name: Imagens Docker
+    runs-on: ubuntu-latest
+    needs: [backend, web]
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t aprendermais-api ./backend
+      - run: docker build -t aprendermais-web ./web

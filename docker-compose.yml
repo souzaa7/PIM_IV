@@ -1,0 +1,48 @@
+# =====================================================================
+# Sobe o sistema completo com um comando:  docker compose up --build
+#   http://localhost:8080  -> site (React)
+#   http://localhost:5000  -> API (.NET) e Swagger em /swagger
+#   localhost,1433         -> SQL Server (usuário sa)
+# =====================================================================
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD:-AprenderMais@2026}
+    ports:
+      - "1433:1433"
+    volumes:
+      - dados-sql:/var/opt/mssql
+
+  banco-scripts:
+    build: ./database
+    environment:
+      SA_PASSWORD: ${SA_PASSWORD:-AprenderMais@2026}
+    depends_on:
+      - sqlserver
+
+  api:
+    build: ./backend
+    environment:
+      Banco__Tipo: SqlServer
+      ConnectionStrings__AprenderMais: "Server=sqlserver,1433;Database=AprenderMais;User Id=sa;Password=${SA_PASSWORD:-AprenderMais@2026};TrustServerCertificate=True"
+      Cors__OrigensPermitidas__0: http://localhost:8080
+    ports:
+      - "5000:8080"
+    depends_on:
+      banco-scripts:
+        condition: service_completed_successfully
+
+  web:
+    build:
+      context: ./web
+      args:
+        VITE_API_URL: http://localhost:5000
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  dados-sql:
