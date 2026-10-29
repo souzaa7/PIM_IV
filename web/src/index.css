@@ -1,0 +1,388 @@
+/* =====================================================================
+   Aprender Mais - estilos do site
+   Tema "caderno de estudo": papel claro, tinta azul de caneta e
+   amarelo marca-texto para destacar progresso e o menu ativo.
+   ===================================================================== */
+
+:root {
+  --papel: #f2f5f9;
+  --folha: #ffffff;
+  --tinta: #1a2230;
+  --suave: #4f5b70;
+  --caneta: #1d3a8a;
+  --caneta-escura: #142a66;
+  --marca-texto: #ffd84d;
+  --linha: #c9d3e0;
+  --verde: #1f6b45;
+  --verde-fundo: #e5f3ea;
+  --vermelho: #a4262c;
+  --vermelho-fundo: #fbe9ea;
+  --raio: 6px;
+  --fonte: 'Atkinson Hyperlegible', system-ui, sans-serif;
+}
+
+/* Alto contraste (botão na barra do topo) */
+:root[data-contraste='alto'] {
+  --papel: #000000;
+  --folha: #000000;
+  --tinta: #ffffff;
+  --suave: #ffffff;
+  --caneta: #9cc3ff;
+  --caneta-escura: #cfe0ff;
+  --marca-texto: #ffe600;
+  --linha: #ffffff;
+  --verde: #7dffb0;
+  --verde-fundo: #000000;
+  --vermelho: #ff8a8a;
+  --vermelho-fundo: #000000;
+}
+
+* { box-sizing: border-box; }
+
+html { font-size: 100%; }
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--fonte);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+}
+
+h1, h2, h3 { line-height: 1.2; margin: 0 0 0.5rem; }
+h1 { font-size: 2rem; }
+h2 { font-size: 1.3rem; }
+h3 { font-size: 1.15rem; }
+p { margin: 0 0 0.75rem; max-width: 70ch; }
+a { color: var(--caneta); }
+
+:focus-visible {
+  outline: 3px solid var(--caneta);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+/* ------------------------------------------------------------ acessibilidade */
+.pular {
+  position: absolute;
+  left: -999px;
+  top: 0.5rem;
+  background: var(--marca-texto);
+  color: #1a2230;
+  padding: 0.5rem 1rem;
+  z-index: 10;
+}
+.pular:focus { left: 0.5rem; }
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.acessibilidade { display: flex; gap: 0.25rem; margin-left: auto; }
+.acessibilidade button {
+  font: inherit;
+  font-size: 0.85rem;
+  background: transparent;
+  color: var(--tinta);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  padding: 0.2rem 0.55rem;
+  cursor: pointer;
+}
+.acessibilidade button[aria-pressed='true'] { background: var(--tinta); color: var(--folha); }
+.acessibilidade button:disabled { opacity: 0.4; cursor: default; }
+
+/* ------------------------------------------------------------ topo e menu */
+.topo {
+  background: var(--folha);
+  border-bottom: 1px solid var(--linha);
+}
+.topo-linha {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0.75rem 1rem 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--tinta);
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+.sessao { display: flex; align-items: center; gap: 0.75rem; }
+.sessao small { color: var(--suave); }
+
+.menu {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+}
+.menu a {
+  padding: 0.6rem 0.75rem;
+  color: var(--suave);
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+}
+.menu a:hover { color: var(--tinta); }
+/* Item ativo: grifado com marca-texto, como num caderno */
+.menu a.active {
+  color: #1a2230;
+  font-weight: 700;
+  background: linear-gradient(transparent 45%, var(--marca-texto) 45%, var(--marca-texto) 82%, transparent 82%);
+}
+:root[data-contraste='alto'] .menu a.active { color: #000; background: var(--marca-texto); }
+
+/* ------------------------------------------------------------ página */
+.pagina {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+  min-height: 70vh;
+}
+.rodape {
+  border-top: 1px solid var(--linha);
+  padding: 1.25rem 1rem;
+  text-align: center;
+  color: var(--suave);
+  font-size: 0.9rem;
+}
+
+.abertura {
+  padding: 2rem 0 2.5rem;
+  border-bottom: 1px solid var(--linha);
+  margin-bottom: 2rem;
+}
+.abertura h1 {
+  font-size: clamp(2rem, 4.5vw, 3.1rem);
+  max-width: 22ch;
+  margin-bottom: 1rem;
+}
+.abertura p { font-size: 1.15rem; color: var(--suave); }
+
+.titulo-com-acao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.detalhes { color: var(--suave); font-size: 0.95rem; margin: 0; }
+
+/* ------------------------------------------------------------ botões */
+.botao {
+  display: inline-block;
+  font: inherit;
+  font-weight: 700;
+  background: var(--caneta);
+  color: var(--folha);
+  border: 2px solid var(--caneta);
+  border-radius: var(--raio);
+  padding: 0.6rem 1.2rem;
+  text-decoration: none;
+  cursor: pointer;
+}
+.botao:hover { background: var(--caneta-escura); border-color: var(--caneta-escura); }
+.botao:disabled { opacity: 0.6; cursor: wait; }
+.botao-secundario { background: transparent; color: var(--caneta); }
+.botao-secundario:hover { background: var(--papel); color: var(--caneta-escura); }
+.botao-pequeno { padding: 0.35rem 0.9rem; }
+.botao-texto {
+  font: inherit;
+  background: none;
+  border: none;
+  color: var(--caneta);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0.25rem;
+}
+.acoes { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center; margin-top: 1rem; }
+
+/* ------------------------------------------------------------ formulários */
+.formulario { display: grid; gap: 1rem; margin: 1rem 0; }
+.formulario label { display: grid; gap: 0.3rem; font-weight: 700; }
+.formulario-linha { display: flex; gap: 1rem; flex-wrap: wrap; align-items: end; }
+.formulario-linha label { flex: 1 1 160px; }
+.formulario-linha .campo-largo { flex: 3 1 260px; }
+
+input, textarea, select {
+  font: inherit;
+  font-weight: 400;
+  color: var(--tinta);
+  background: var(--folha);
+  border: 1px solid #8a97ab;
+  border-radius: var(--raio);
+  padding: 0.55rem 0.7rem;
+  width: 100%;
+}
+textarea { resize: vertical; }
+
+.formulario-central { max-width: 460px; }
+.formulario-largo { max-width: 640px; }
+.painel {
+  background: var(--folha);
+  border: 1px solid var(--linha);
+  border-radius: var(--raio);
+  padding: 1.25rem;
+}
+.busca { display: grid; gap: 0.3rem; max-width: 360px; margin: 1rem 0; font-weight: 700; }
+
+.dica { margin-top: 1.5rem; color: var(--suave); }
+.dica summary { cursor: pointer; }
+
+/* ------------------------------------------------------------ avisos */
+.estado { color: var(--suave); }
+.aviso {
+  border-left: 4px solid;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0 var(--raio) var(--raio) 0;
+}
+.aviso-sucesso { border-color: var(--verde); background: var(--verde-fundo); color: var(--verde); }
+.aviso-erro { border-color: var(--vermelho); background: var(--vermelho-fundo); color: var(--vermelho); }
+
+/* ------------------------------------------------------------ listas (linhas de caderno) */
+.lista-cursos,
+.lista-matriculas,
+.lista-atividades,
+.lista-certificados {
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+  border-top: 1px solid var(--linha);
+}
+.lista-cursos > li,
+.lista-matriculas > li,
+.lista-atividades > li {
+  border-bottom: 1px solid var(--linha);
+  padding: 1.25rem 0;
+}
+
+.lista-matriculas > li {
+  display: grid;
+  grid-template-columns: 1fr minmax(180px, 280px) auto;
+  gap: 1rem;
+  align-items: center;
+}
+.apagado { opacity: 0.55; }
+
+.selo { color: var(--verde); font-weight: 700; margin: 0; }
+
+.atividade-cabecalho {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+.situacao {
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: 1px solid currentColor;
+  border-radius: 99px;
+  padding: 0.1rem 0.7rem;
+  white-space: nowrap;
+}
+.situacao-pendente { color: var(--caneta); }
+.situacao-aguardando { color: var(--suave); }
+.situacao-avaliada { color: var(--verde); }
+.situacao-prazo { color: var(--vermelho); }
+
+.nota { font-weight: 700; }
+.nota span { font-weight: 400; color: var(--suave); }
+
+.resposta-aluno {
+  margin: 0.75rem 0;
+  padding: 0.75rem 1rem;
+  background: var(--folha);
+  border-left: 4px solid var(--linha);
+  white-space: pre-wrap;
+}
+
+/* ------------------------------------------------------------ progresso (marca-texto) */
+.progresso { display: flex; align-items: center; gap: 0.6rem; }
+.progresso span { font-weight: 700; min-width: 3.5ch; }
+.progresso-trilho {
+  flex: 1;
+  height: 0.9rem;
+  background: var(--folha);
+  border: 1px solid var(--linha);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.progresso-preenchido {
+  height: 100%;
+  background: var(--marca-texto);
+  transition: width 0.6s ease;
+}
+
+/* ------------------------------------------------------------ tabelas */
+.tabela-rolagem { overflow-x: auto; margin: 1rem 0; }
+table { width: 100%; border-collapse: collapse; background: var(--folha); }
+caption { text-align: left; font-weight: 700; padding: 0.5rem 0; }
+th, td { text-align: left; padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--linha); vertical-align: top; }
+th { color: var(--suave); font-size: 0.95rem; }
+.celula-acoes { white-space: nowrap; text-align: right; }
+
+/* ------------------------------------------------------------ painel do administrador */
+.indicadores {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 0;
+  margin: 1rem 0 2rem;
+  border-top: 1px solid var(--linha);
+  border-left: 1px solid var(--linha);
+}
+.indicadores div {
+  padding: 1rem;
+  border-right: 1px solid var(--linha);
+  border-bottom: 1px solid var(--linha);
+  background: var(--folha);
+}
+.indicadores dt { color: var(--suave); font-size: 0.95rem; }
+.indicadores dd { margin: 0.25rem 0 0; font-size: 1.8rem; font-weight: 700; }
+
+/* ------------------------------------------------------------ certificado */
+.certificado {
+  background: var(--folha);
+  border: 2px solid var(--caneta);
+  outline: 1px solid var(--caneta);
+  outline-offset: -8px;
+  padding: 2rem;
+  margin: 1rem 0;
+  text-align: center;
+}
+.certificado p { margin-left: auto; margin-right: auto; }
+.certificado-nome { font-size: 1.8rem; font-weight: 700; }
+
+/* ------------------------------------------------------------ celular */
+@media (max-width: 640px) {
+  h1 { font-size: 1.6rem; }
+  .acessibilidade { order: 3; margin-left: 0; width: 100%; }
+  .lista-matriculas > li { grid-template-columns: 1fr; }
+  .atividade-cabecalho { flex-direction: column; }
+}
+
+/* ------------------------------------------------------------ impressão (certificado) */
+@media print {
+  .topo, .rodape, .botao-texto, .pagina > h1, .pagina > p { display: none; }
+  .certificado { break-inside: avoid; }
+}
