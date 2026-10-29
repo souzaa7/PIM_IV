@@ -15,6 +15,8 @@ public class PrincipalForm : Form
     private readonly ConteudoService _conteudos;
     private readonly MatriculaService _matriculas;
     private readonly UsuarioService _usuarios;
+    private readonly RespostaService _respostas;
+    private readonly NotaService _notas;
     private readonly Usuario _usuario;
 
     private readonly TabControl _abas = new() { Dock = DockStyle.Fill };
@@ -22,6 +24,8 @@ public class PrincipalForm : Form
     private readonly DataGridView _gridMatriculas = GridHelper.Criar();
     private readonly DataGridView _gridGestao = GridHelper.Criar();
     private readonly DataGridView _gridUsuarios = GridHelper.Criar();
+    private readonly DataGridView _gridNotas = GridHelper.Criar();
+    private readonly DataGridView _gridCorrecao = GridHelper.Criar();
 
     // Botões de ação: ficam como campos para refletirem a seleção atual das tabelas.
     private readonly Button _btnMatricular = new() { Text = "Matricular-me no conteúdo selecionado", AutoSize = true };
@@ -29,6 +33,7 @@ public class PrincipalForm : Form
     private readonly Button _btnNovoConteudo = new() { Text = "Novo conteúdo...", AutoSize = true };
     private readonly Button _btnAlternarConteudo = new() { AutoSize = true };
     private readonly Button _btnAlternarUsuario = new() { AutoSize = true };
+    private readonly Button _btnCorrigir = new() { Text = "Corrigir resposta selecionada...", AutoSize = true };
 
     /// <summary>Verdadeiro quando o usuário clicou em "Sair da conta" (volta ao login).</summary>
     public bool SairDaConta { get; private set; }
@@ -37,11 +42,15 @@ public class PrincipalForm : Form
         SessaoUsuario sessao,
         ConteudoService conteudos,
         MatriculaService matriculas,
-        UsuarioService usuarios)
+        UsuarioService usuarios,
+        RespostaService respostas,
+        NotaService notas)
     {
         _conteudos = conteudos;
         _matriculas = matriculas;
         _usuarios = usuarios;
+        _respostas = respostas;
+        _notas = notas;
         _usuario = sessao.Atual ?? throw new InvalidOperationException("Nenhum usuário autenticado.");
 
         Text = "Aprender Mais";
@@ -53,6 +62,7 @@ public class PrincipalForm : Form
         _gridMatriculas.SelectionChanged += (_, _) => AtualizarBotoes();
         _gridGestao.SelectionChanged += (_, _) => AtualizarBotoes();
         _gridUsuarios.SelectionChanged += (_, _) => AtualizarBotoes();
+        _gridCorrecao.SelectionChanged += (_, _) => AtualizarBotoes();
 
         // Controle que preenche o espaço é adicionado primeiro; o painel do topo depois.
         Controls.Add(_abas);
@@ -63,9 +73,11 @@ public class PrincipalForm : Form
         {
             case PerfilUsuario.Aluno:
                 _abas.TabPages.Add(CriarAbaMinhasMatriculas());
+                _abas.TabPages.Add(CriarAbaMinhasNotas());
                 break;
             case PerfilUsuario.Secretaria:
                 _abas.TabPages.Add(CriarAbaGestaoConteudos());
+                _abas.TabPages.Add(CriarAbaCorrecao());
                 break;
             case PerfilUsuario.Admin:
                 _abas.TabPages.Add(CriarAbaUsuarios());
@@ -151,6 +163,38 @@ public class PrincipalForm : Form
         return aba;
     }
 
+    /// <summary>UC05 - boletim do aluno.</summary>
+    private TabPage CriarAbaMinhasNotas()
+    {
+        var aba = new TabPage("Minhas notas");
+
+        GridHelper.Coluna(_gridNotas, nameof(NotaDto.Conteudo), "Conteúdo", 160);
+        GridHelper.Coluna(_gridNotas, nameof(NotaDto.Atividade), "Atividade", 180);
+        GridHelper.Coluna(_gridNotas, nameof(NotaDto.Valor), "Nota", 50);
+        GridHelper.Coluna(_gridNotas, nameof(NotaDto.Feedback), "Feedback", 220);
+        GridHelper.Coluna(_gridNotas, nameof(NotaDto.DataAvaliacao), "Avaliada em", 80);
+
+        aba.Controls.Add(_gridNotas);
+        return aba;
+    }
+
+    /// <summary>UC06 - respostas aguardando correção da secretaria.</summary>
+    private TabPage CriarAbaCorrecao()
+    {
+        var aba = new TabPage("Corrigir atividades");
+
+        GridHelper.Coluna(_gridCorrecao, nameof(RespostaPendenteDto.Aluno), "Aluno", 140);
+        GridHelper.Coluna(_gridCorrecao, nameof(RespostaPendenteDto.Atividade), "Atividade", 180);
+        GridHelper.Coluna(_gridCorrecao, nameof(RespostaPendenteDto.Conteudo), "Conteúdo", 150);
+        GridHelper.Coluna(_gridCorrecao, nameof(RespostaPendenteDto.DataEnvio), "Enviada em", 100);
+
+        aba.Controls.Add(_gridCorrecao);
+
+        _btnCorrigir.Click += async (_, _) => await CorrigirAsync();
+        aba.Controls.Add(CriarRodape(_btnCorrigir));
+        return aba;
+    }
+
     private TabPage CriarAbaGestaoConteudos()
     {
         var aba = new TabPage("Gerenciar conteúdos");
@@ -232,10 +276,16 @@ public class PrincipalForm : Form
             GridHelper.Preencher(_gridCatalogo, await _conteudos.ListarAtivosAsync(), c => c.Id);
 
             if (_usuario is Aluno)
+            {
                 GridHelper.Preencher(_gridMatriculas, await _matriculas.ListarDoAlunoAsync(_usuario), m => m.IdMatricula);
+                _gridNotas.DataSource = (await _notas.ListarDoAlunoAsync(_usuario)).ToList();
+            }
 
             if (_usuario is Secretaria)
+            {
                 GridHelper.Preencher(_gridGestao, await _conteudos.ListarTodosAsync(_usuario), c => c.Id);
+                GridHelper.Preencher(_gridCorrecao, await _respostas.ListarPendentesAsync(_usuario), r => r.IdResposta);
+            }
 
             if (_usuario is Administrador)
                 GridHelper.Preencher(_gridUsuarios, await _usuarios.ListarAsync(_usuario), u => u.Id);
@@ -251,6 +301,8 @@ public class PrincipalForm : Form
     private void AtualizarBotoes()
     {
         _btnMatricular.Enabled = _gridCatalogo.CurrentRow?.DataBoundItem is ConteudoDto;
+
+        _btnCorrigir.Enabled = _gridCorrecao.CurrentRow?.DataBoundItem is RespostaPendenteDto;
 
         _btnCancelarMatricula.Enabled =
             _gridMatriculas.CurrentRow?.DataBoundItem is MatriculaDto { PodeCancelar: true };
@@ -307,6 +359,27 @@ public class PrincipalForm : Form
             await _matriculas.CancelarAsync(matricula.IdMatricula, _usuario);
             await RecarregarAsync();
         });
+    }
+
+    private async Task CorrigirAsync()
+    {
+        if (_gridCorrecao.CurrentRow?.DataBoundItem is not RespostaPendenteDto resposta)
+        {
+            Aviso("Selecione uma resposta.");
+            return;
+        }
+
+        using var janela = new AvaliarRespostaForm(resposta,
+            dto => _respostas.AvaliarAsync(resposta.IdResposta, dto, _usuario));
+
+        if (janela.ShowDialog(this) != DialogResult.OK || janela.Resultado is null)
+            return;
+
+        var r = janela.Resultado;
+        Informacao(r.ConteudoConcluido
+            ? $"Nota salva! {resposta.Aluno} concluiu o conteúdo e recebeu o certificado {r.CodigoCertificado}."
+            : $"Nota salva! Progresso de {resposta.Aluno} no conteúdo: {r.ProgressoDoAluno:0.#}%.");
+        await RecarregarAsync();
     }
 
     private async Task NovoConteudoAsync()

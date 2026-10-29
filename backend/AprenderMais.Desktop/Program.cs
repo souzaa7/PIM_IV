@@ -3,10 +3,12 @@ using AprenderMais.Aplicacao.Interfaces;
 using AprenderMais.Aplicacao.Servicos;
 using AprenderMais.Aplicacao.Sessao;
 using AprenderMais.Desktop.Formularios;
-using AprenderMais.Infraestrutura.Memoria;
+using AprenderMais.Infraestrutura;
 using AprenderMais.Infraestrutura.Relogio;
 using AprenderMais.Infraestrutura.Seguranca;
 using System;
+using System.IO;
+using System.Text.Json;
 using System.Windows.Forms;
 
 namespace AprenderMais.Desktop;
@@ -36,18 +38,16 @@ internal static class Program
     private static void ExecutarAplicacao()
     {
         // Raiz de composição: centraliza a criação das dependências.
-        // Ao migrar para o SQL Server, os repositórios poderão ser substituídos aqui.
+        // O arquivo appsettings.json decide se os dados ficam em memória ou no SQL Server.
+        var (tipoBanco, connectionString) = LerConfiguracao();
 
         IPasswordHasher hasher = new BCryptPasswordHasher();
         IRelogio relogio = new RelogioSistema();
 
-        var banco = new BancoEmMemoria();
-        DadosIniciais.Popular(banco, hasher);
-
-        var usuarios = new UsuarioRepositorioMemoria(banco);
-
-        var conteudos = new ConteudoRepositorioMemoria(banco);
-        var matriculas = new MatriculaRepositorioMemoria(banco);
+        var repositorios = FabricaRepositorios.Criar(tipoBanco, connectionString, hasher);
+        var usuarios = repositorios.Usuarios;
+        var conteudos = repositorios.Conteudos;
+        var matriculas = repositorios.Matriculas;
 
         var sessao = new SessaoUsuario();
 
@@ -66,6 +66,21 @@ internal static class Program
         var usuarioService = new UsuarioService(
             usuarios,
             hasher);
+
+        var respostaService = new RespostaService(
+            repositorios.Respostas,
+            repositorios.Atividades,
+            matriculas,
+            repositorios.Notas,
+            repositorios.Certificados,
+            relogio);
+
+        var notaService = new NotaService(
+            repositorios.Respostas,
+            repositorios.Notas,
+            repositorios.Atividades,
+            conteudos,
+            relogio);
 
         // Permite voltar ao login após sair da conta.
         // O aplicativo encerra quando o usuário fecha o login
@@ -86,7 +101,9 @@ internal static class Program
                 sessao,
                 conteudoService,
                 matriculaService,
-                usuarioService))
+                usuarioService,
+                respostaService,
+                notaService))
             {
                 Application.Run(principal);
                 sairDaConta = principal.SairDaConta;
@@ -99,5 +116,28 @@ internal static class Program
                 break;
             }
         }
+    }
+
+    /// <summary>
+    /// Lê appsettings.json (ao lado do .exe). Se o arquivo não existir, usa o modo memória.
+    /// </summary>
+    private static (string? TipoBanco, string? ConnectionString) LerConfiguracao()
+    {
+        var caminho = Path.Combine(AppContext.BaseDirectory, "appsettings.json");
+        if (!File.Exists(caminho))
+            return ("Memoria", null);
+
+        using var json = JsonDocument.Parse(File.ReadAllText(caminho));
+        var raiz = json.RootElement;
+
+        string? tipo = raiz.TryGetProperty("Banco", out var banco) && banco.TryGetProperty("Tipo", out var t)
+            ? t.GetString()
+            : "Memoria";
+
+        string? conexao = raiz.TryGetProperty("ConnectionStrings", out var cs) && cs.TryGetProperty("AprenderMais", out var c)
+            ? c.GetString()
+            : null;
+
+        return (tipo, conexao);
     }
 }
