@@ -1,0 +1,44 @@
+@startuml arquitetura
+!include ../atividade/src/_estilo.puml
+title Arquitetura da solução Aprender Mais
+skinparam componentStyle rectangle
+skinparam rectangleBorderColor #2F4A7A
+skinparam rectangleBackgroundColor #FFFFFF
+skinparam packageBorderColor #9AA8C2
+
+actor Aluno
+actor Secretaria
+actor Administrador
+
+package "Clientes (front-end)" {
+  [Site React\n(web/)] as web
+  [App React Native / Expo\n(mobile/)] as mobile
+  [Desktop Windows Forms\n(backend/AprenderMais.Desktop)] as desktop
+}
+
+package "Back-end .NET 10 (backend/)" {
+  [AprenderMais.Api\nControllers REST + token Bearer + Swagger] as api
+  [AprenderMais.Aplicacao\nServiços (casos de uso) e DTOs] as aplicacao
+  [AprenderMais.Dominio\nEntidades, regras e interfaces] as dominio
+  [AprenderMais.Infraestrutura\nRepositórios SQL Server e Memória, BCrypt] as infra
+}
+
+database "SQL Server\ntabelas, views,\nprocedures, triggers" as banco
+
+Aluno --> web
+Aluno --> mobile
+Secretaria --> web
+Secretaria --> desktop
+Administrador --> web
+Administrador --> desktop
+
+web --> api : HTTP/JSON
+mobile --> api : HTTP/JSON\n(+ cache offline)
+api --> aplicacao
+desktop --> aplicacao : chama direto\n(mesmas regras)
+aplicacao --> dominio
+infra ..|> dominio : implementa\ninterfaces
+api ..> infra : injeção de\ndependências
+desktop ..> infra
+infra --> banco : ADO.NET\n(Microsoft.Data.SqlClient)
+@enduml

@@ -1,0 +1,29 @@
+@startuml navegacao
+!include ../atividade/src/_estilo.puml
+title Fluxo de navegação do app mobile
+skinparam StateBackgroundColor #FFFFFF
+skinparam StateBorderColor #2F4A7A
+
+[*] --> Carregando
+Carregando --> Login : sem token salvo
+Carregando --> Abas : token salvo\n(mostra dados do celular)
+Login --> Cadastro : "Criar minha conta"
+Cadastro --> Abas : conta criada
+Login --> Abas : login de aluno
+
+state Abas {
+  [*] --> Inicio
+  Inicio : matrículas e progresso
+  Cursos : catálogo e matrícula
+  Atividades : situação de cada entrega
+  Notas : boletim e média
+  Perfil : certificados e sair
+  Inicio --> Cursos
+  Cursos --> Atividades
+  Atividades --> Notas
+  Notas --> Perfil
+}
+Atividades --> Responder : "Responder"
+Responder --> Atividades : enviada ou guardada\nna fila offline
+Abas --> Login : "Sair da conta"
+@enduml

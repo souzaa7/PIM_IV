@@ -1,0 +1,63 @@
+@startuml camadas
+!include ../atividade/src/_estilo.puml
+title Camadas e orientação a objetos (exemplo: UC06 Avaliar atividade)
+skinparam ClassBackgroundColor #FFFFFF
+skinparam ClassBorderColor #2F4A7A
+hide empty members
+
+package "Api" {
+  class RespostasController {
+    +Avaliar(id, AvaliarRespostaDto)
+  }
+}
+package "Aplicacao" {
+  class RespostaService {
+    +EnviarAsync(dto, solicitante)
+    +ListarPendentesAsync(solicitante)
+    +AvaliarAsync(idResposta, dto, solicitante)
+  }
+}
+package "Dominio" {
+  abstract class Usuario {
+    +Id : int
+    +Nome : string
+    +Ativo : bool
+    {abstract} +Perfil : PerfilUsuario
+  }
+  class Aluno
+  class Secretaria
+  class Administrador
+  class Nota {
+    +Valor : decimal
+    +Validar(notaMaxima)
+  }
+  class Matricula {
+    +Progresso : decimal
+    +AtualizarProgresso(avaliadas, total, agora)
+    +Cancelar()
+  }
+  interface INotaRepositorio
+  interface IMatriculaRepositorio
+  interface ICertificadoRepositorio
+}
+package "Infraestrutura" {
+  class NotaRepositorioSql
+  class NotaRepositorioMemoria
+  class MatriculaRepositorioSql
+  class CertificadoRepositorioSql
+}
+
+Usuario <|-- Aluno
+Usuario <|-- Secretaria
+Usuario <|-- Administrador
+RespostasController --> RespostaService
+RespostaService --> INotaRepositorio
+RespostaService --> IMatriculaRepositorio
+RespostaService --> ICertificadoRepositorio
+RespostaService ..> Nota
+RespostaService ..> Matricula
+INotaRepositorio <|.. NotaRepositorioSql
+INotaRepositorio <|.. NotaRepositorioMemoria
+IMatriculaRepositorio <|.. MatriculaRepositorioSql
+ICertificadoRepositorio <|.. CertificadoRepositorioSql
+@enduml

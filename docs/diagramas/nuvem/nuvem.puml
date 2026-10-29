@@ -1,0 +1,34 @@
+@startuml nuvem
+!include ../atividade/src/_estilo.puml
+title Plano de implantação na nuvem (Microsoft Azure)
+skinparam rectangleBorderColor #2F4A7A
+skinparam rectangleBackgroundColor #FFFFFF
+skinparam cloudBorderColor #9AA8C2
+
+actor Usuários
+node "GitHub" {
+  rectangle "Repositório PIM_IV" as repo
+  rectangle "GitHub Actions\n(CI: build e testes;\nCD: imagens e deploy)" as actions
+}
+cloud "Microsoft Azure (região Brazil South)" {
+  rectangle "Azure Container Registry\n(imagens Docker)" as acr
+  rectangle "Azure Static Web Apps\n(site React)" as swa
+  rectangle "Azure App Service for Containers\n(API .NET, 2+ instâncias,\nescala automática)" as app
+  database "Azure SQL Database\n(backup automático)" as sql
+  rectangle "Azure Key Vault\n(senhas e connection string)" as kv
+  rectangle "Application Insights\n+ Azure Monitor\n(logs, alertas, /saude)" as insights
+}
+rectangle "App mobile\n(Expo / Google Play)" as loja
+
+repo --> actions : push na main
+actions --> acr : docker build/push
+actions --> swa : deploy do site
+acr --> app : nova versão
+Usuários --> swa : HTTPS
+Usuários --> loja
+loja --> app : HTTPS (API REST)
+swa --> app : HTTPS (API REST)
+app --> sql
+app ..> kv : lê segredos
+app ..> insights : telemetria
+@enduml

@@ -1,0 +1,122 @@
+@startuml mer
+!include ../atividade/src/_estilo.puml
+title MER / Modelo lógico - Aprender Mais (SQL Server)
+hide circle
+skinparam linetype ortho
+skinparam ClassBackgroundColor #FFFFFF
+skinparam ClassBorderColor #2F4A7A
+skinparam ClassHeaderBackgroundColor #E8EEF8
+
+entity "usuario" as usuario {
+  * **id_usuario** : INT <<PK>>
+  --
+  * cpf : VARCHAR(11) <<UQ>>
+  * nome : NVARCHAR(100)
+  * email : VARCHAR(100) <<UQ>>
+  * senha_hash : VARCHAR(255)
+  * perfil : VARCHAR(20) (aluno|secretaria|admin)
+  * ativo : BIT
+  * data_cadastro : DATETIME2
+  * data_atualizacao : DATETIME2
+}
+entity "aluno" as aluno {
+  * **id_aluno** : INT <<PK>>
+  --
+  * id_usuario : INT <<FK, UQ>>
+}
+entity "secretaria" as secretaria {
+  * **id_secretaria** : INT <<PK>>
+  --
+  * id_usuario : INT <<FK, UQ>>
+}
+entity "administrador" as administrador {
+  * **id_admin** : INT <<PK>>
+  --
+  * id_usuario : INT <<FK, UQ>>
+}
+entity "conteudo" as conteudo {
+  * **id_conteudo** : INT <<PK>>
+  --
+  * titulo : NVARCHAR(150)
+  descricao : NVARCHAR(MAX)
+  * categoria : NVARCHAR(80)
+  * nivel : NVARCHAR(40)
+  * duracao : NVARCHAR(30)
+  * aulas : INT
+  * ativo : BIT
+  * id_secretaria : INT <<FK>>
+}
+entity "atividade" as atividade {
+  * **id_atividade** : INT <<PK>>
+  --
+  * titulo : NVARCHAR(150)
+  descricao : NVARCHAR(MAX)
+  * data_entrega : DATETIME2
+  * nota_maxima : DECIMAL(5,2)
+  * ativo : BIT
+  * id_conteudo : INT <<FK>>
+}
+entity "matricula" as matricula {
+  * **id_matricula** : INT <<PK>>
+  --
+  * id_aluno : INT <<FK>>
+  * id_conteudo : INT <<FK>>
+  * status : VARCHAR(20)
+  * progresso : DECIMAL(5,2)
+  * data_matricula : DATETIME2
+  data_conclusao : DATETIME2
+  ..
+  UQ (id_aluno, id_conteudo)
+}
+entity "resposta" as resposta {
+  * **id_resposta** : INT <<PK>>
+  --
+  * texto_resposta : NVARCHAR(MAX)
+  arquivo_url : VARCHAR(500)
+  * data_envio : DATETIME2
+  * id_atividade : INT <<FK>>
+  * id_aluno : INT <<FK>>
+  ..
+  UQ (id_aluno, id_atividade)
+}
+entity "nota" as nota {
+  * **id_nota** : INT <<PK>>
+  --
+  * valor : DECIMAL(5,2)
+  feedback : NVARCHAR(MAX)
+  * data_avaliacao : DATETIME2
+  * id_resposta : INT <<FK, UQ>>
+  * id_secretaria : INT <<FK>>
+}
+entity "certificado" as certificado {
+  * **id_certificado** : INT <<PK>>
+  --
+  * id_aluno : INT <<FK>>
+  * id_conteudo : INT <<FK>>
+  * codigo_validacao : VARCHAR(40) <<UQ>>
+  * data_emissao : DATETIME2
+}
+entity "log_auditoria" as log {
+  * **id_log** : INT <<PK>>
+  --
+  * tabela : VARCHAR(50)
+  * id_registro : INT
+  * acao : VARCHAR(50)
+  descricao : NVARCHAR(300)
+  * data_hora : DATETIME2
+}
+
+usuario ||--o| aluno
+usuario ||--o| secretaria
+usuario ||--o| administrador
+secretaria ||--o{ conteudo : publica
+conteudo ||--o{ atividade : possui
+aluno ||--o{ matricula : faz
+conteudo ||--o{ matricula : recebe
+aluno ||--o{ resposta : envia
+atividade ||--o{ resposta : recebe
+resposta ||--o| nota : recebe
+secretaria ||--o{ nota : corrige
+aluno ||--o{ certificado : ganha
+conteudo ||--o{ certificado : comprova
+@enduml

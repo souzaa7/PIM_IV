@@ -1,0 +1,32 @@
+@startuml sincronizacao
+!include ../atividade/src/_estilo.puml
+title Sincronização de dados do app (funciona sem internet)
+
+|Aluno|
+start
+:Responde uma atividade;
+|App (celular)|
+if (API respondeu?) then (sim)
+  :Resposta gravada no servidor;
+else (sem conexão)
+  :Guarda a resposta na fila\n(AsyncStorage);
+  :Mostra "Guardada no celular";
+endif
+:Ao abrir o app, puxar a tela ou tocar em "Sincronizar";
+repeat
+  :Envia o próximo item da fila;
+  if (API aceitou?) then (sim)
+    :Remove da fila;
+  elseif (sem conexão) then
+    :Mantém na fila;
+  else (recusou, ex.: prazo)
+    :Remove e avisa o aluno;
+  endif
+repeat while (Ainda há itens?) is (sim) not (não)
+|API|
+:GET /api/sincronizacao\n(cursos, matrículas, atividades,\nnotas e certificados);
+|App (celular)|
+:Salva o pacote no celular;
+:Atualiza as telas;
+stop
+@enduml
