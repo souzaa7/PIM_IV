@@ -7,6 +7,7 @@ using AprenderMais.Dominio.Repositorios;
 
 namespace AprenderMais.Aplicacao.Servicos;
 
+/// <summary>Matrículas do aluno nos conteúdos (parte do UC03).</summary>
 public class MatriculaService
 {
     private readonly IMatriculaRepositorio _matriculas;
@@ -22,7 +23,7 @@ public class MatriculaService
 
     public async Task<MatriculaDto> MatricularAsync(int idConteudo, Usuario solicitante)
     {
-        var aluno = ExigirAluno(solicitante);
+        var aluno = Permissoes.ExigirAluno(solicitante);
 
         var conteudo = await _conteudos.ObterPorIdAsync(idConteudo);
         if (conteudo is null || !conteudo.Ativo)
@@ -50,7 +51,7 @@ public class MatriculaService
 
     public async Task<IReadOnlyList<MatriculaDto>> ListarDoAlunoAsync(Usuario solicitante)
     {
-        var aluno = ExigirAluno(solicitante);
+        var aluno = Permissoes.ExigirAluno(solicitante);
 
         var matriculas = await _matriculas.ListarPorAlunoAsync(aluno.IdAluno);
         var resultado = new List<MatriculaDto>();
@@ -66,7 +67,7 @@ public class MatriculaService
 
     public async Task CancelarAsync(int idMatricula, Usuario solicitante)
     {
-        var aluno = ExigirAluno(solicitante);
+        var aluno = Permissoes.ExigirAluno(solicitante);
 
         var matricula = await _matriculas.ObterPorIdAsync(idMatricula);
         if (matricula is null || matricula.IdAluno != aluno.IdAluno)
@@ -76,16 +77,10 @@ public class MatriculaService
         await _matriculas.AtualizarAsync(matricula);
     }
 
-    private static Aluno ExigirAluno(Usuario solicitante)
-    {
-        if (solicitante is not Aluno aluno)
-            throw new DominioException("Esta operação é exclusiva de alunos.");
-        return aluno;
-    }
-
     private MatriculaDto ParaDto(Matricula m, string tituloConteudo) =>
         new(
             m.Id,
+            m.IdConteudo,
             tituloConteudo,
             RotuloStatus(m.Status),
             m.Progresso,

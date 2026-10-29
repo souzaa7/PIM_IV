@@ -23,6 +23,9 @@ public class UsuarioRepositorioMemoria : IUsuarioRepositorio
     public Task<Usuario?> ObterPorIdAsync(int id) =>
         Task.FromResult(_banco.Usuarios.FirstOrDefault(u => u.Id == id));
 
+    public Task<Usuario?> ObterPorIdAlunoAsync(int idAluno) =>
+        Task.FromResult<Usuario?>(_banco.Usuarios.OfType<Aluno>().FirstOrDefault(a => a.IdAluno == idAluno));
+
     public Task<IReadOnlyList<Usuario>> ListarAsync() =>
         Task.FromResult<IReadOnlyList<Usuario>>(_banco.Usuarios.ToList());
 

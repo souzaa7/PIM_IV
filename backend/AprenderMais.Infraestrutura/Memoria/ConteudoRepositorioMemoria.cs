@@ -31,5 +31,15 @@ public class ConteudoRepositorioMemoria : IConteudoRepositorio
         return Task.FromResult(conteudo);
     }
 
-    public Task AtualizarAsync(Conteudo conteudo) => Task.CompletedTask;
+    public Task AtualizarAsync(Conteudo conteudo)
+    {
+        // Mesmo comportamento do trigger trg_conteudo_desativado:
+        // conteúdo desativado desativa também as suas atividades.
+        if (!conteudo.Ativo)
+        {
+            foreach (var atividade in _banco.Atividades.Where(a => a.IdConteudo == conteudo.Id))
+                atividade.Ativo = false;
+        }
+        return Task.CompletedTask;
+    }
 }

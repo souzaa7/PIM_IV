@@ -40,5 +40,21 @@ public class MatriculaRepositorioMemoria : IMatriculaRepositorio
         return Task.FromResult(matricula);
     }
 
+    // Os objetos já são os mesmos da lista; um banco real gravaria as alterações aqui.
     public Task AtualizarAsync(Matricula matricula) => Task.CompletedTask;
+
+    /// <summary>Mesma conta da procedure sp_calcular_progresso.</summary>
+    public Task<(int Avaliadas, int Total)> ContarAtividadesAsync(int idAluno, int idConteudo)
+    {
+        var atividades = _banco.Atividades
+            .Where(a => a.IdConteudo == idConteudo && a.Ativo)
+            .Select(a => a.Id)
+            .ToList();
+
+        int avaliadas = _banco.Respostas
+            .Where(r => r.IdAluno == idAluno && atividades.Contains(r.IdAtividade))
+            .Count(r => _banco.Notas.Any(n => n.IdResposta == r.Id));
+
+        return Task.FromResult((avaliadas, atividades.Count));
+    }
 }
