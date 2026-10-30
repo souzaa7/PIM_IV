@@ -15,6 +15,14 @@ Cada arquivo corresponde a uma etapa do **Manual do PIM IV**. O conteúdo serve 
 | 9 | [Gerenciamento Ágil](09-gerenciamento-agil.md) (Gerenciamento de Projetos Ágil) | 1,0 |
 | — | [Referências (ABNT)](referencias.md) | 1,0 (ABNT) |
 
+## Para estudar e apresentar
+
+| Arquivo | Para quê |
+|---|---|
+| [GUIA-DE-ESTUDO.md](GUIA-DE-ESTUDO.md) | Explica o sistema inteiro: o caminho de um clique, back-end, banco, web, mobile, desktop, glossário e perguntas do professor |
+| [ROTEIRO-DE-APRESENTACAO.md](ROTEIRO-DE-APRESENTACAO.md) | Divisão das falas e demonstração passo a passo |
+| [entrega/](entrega/README.md) | Documento final em Word (ABNT), pronto para revisar e postar |
+
 ## Diagramas
 
 | Pasta | Conteúdo | Ferramenta |

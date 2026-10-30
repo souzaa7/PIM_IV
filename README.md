@@ -21,6 +21,8 @@
 | Julia Peneluppi de Faria | R952355 | Product Owner, UX e documentação |
 | Lucas Ferreira Tomé | R958752 | Banco de dados e DevOps |
 
+> **Para estudar o projeto:** comece pelo [Guia de estudo](docs/GUIA-DE-ESTUDO.md). Para apresentar, use o [Roteiro de apresentação](docs/ROTEIRO-DE-APRESENTACAO.md). O documento final em ABNT está em [docs/entrega](docs/entrega/README.md).
+
 ## Sumário
 
 - [Estrutura do repositório](#estrutura-do-repositório)
