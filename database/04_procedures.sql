@@ -23,7 +23,7 @@ CREATE OR ALTER PROCEDURE sp_cadastrar_usuario
 AS
 BEGIN
     SET NOCOUNT ON;
-    SET XACT_ABORT ON;   -- qualquer erro desfaz a transação inteira
+    SET XACT_ABORT ON; -- qualquer erro desfaz a transação inteira
 
     IF EXISTS (SELECT 1 FROM usuario WHERE email = @email)
         THROW 50001, N'Já existe um usuário com este e-mail.', 1;

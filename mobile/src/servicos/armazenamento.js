@@ -4,8 +4,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 // mesmo se o app for fechado ou se a internet cair.
 const CHAVES = {
   token: 'am.token',
-  pacote: 'am.pacote',         // última cópia dos dados vinda da API
-  fila: 'am.filaRespostas',    // respostas feitas sem internet, esperando envio
+  pacote: 'am.pacote', // última cópia dos dados vinda da API
+  fila: 'am.filaRespostas', // respostas feitas sem internet, esperando envio
 }
 
 async function ler(chave, padrao) {

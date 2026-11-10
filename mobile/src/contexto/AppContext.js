@@ -3,15 +3,17 @@ import { api } from '../servicos/api'
 import { armazenamento } from '../servicos/armazenamento'
 import { enviarResposta, sincronizar } from '../servicos/sincronizacao'
 
+const PERFIL_ALUNO = 'Aluno'
+
 // Estado global do app: login, dados do aluno e situação da sincronização.
 const AppContext = createContext(null)
 
 export function AppProvider({ children }) {
   const [logado, setLogado] = useState(false)
   const [iniciando, setIniciando] = useState(true)
-  const [pacote, setPacote] = useState(null)        // dados do aluno (da API ou do celular)
+  const [pacote, setPacote] = useState(null) // dados do aluno (da API ou do celular)
   const [online, setOnline] = useState(true)
-  const [fila, setFila] = useState([])              // respostas guardadas sem internet
+  const [fila, setFila] = useState([]) // respostas guardadas sem internet
   const [sincronizando, setSincronizando] = useState(false)
   const [problemas, setProblemas] = useState([])
 
@@ -48,7 +50,7 @@ export function AppProvider({ children }) {
     const resposta = await api.login(email, senha)
     await armazenamento.salvarToken(resposta.accessToken)
     const usuario = await api.eu()
-    if (usuario.perfil !== 'Aluno') {
+    if (usuario.perfil !== PERFIL_ALUNO) {
       await armazenamento.limparTudo()
       throw new Error('O aplicativo é para alunos. Secretaria e administrador usam o site.')
     }

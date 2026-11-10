@@ -1,26 +1,26 @@
 import { api, SemConexaoErro } from './api'
 import { armazenamento } from './armazenamento'
 
-// =====================================================================
-// SINCRONIZAÇÃO DE DADOS (funcionar sem internet)
-//
+// Sincronização (uso sem internet):
 // 1) Ao abrir o app, as telas mostram a última cópia salva no celular.
-// 2) Respostas feitas sem internet entram numa FILA no celular.
-// 3) Ao sincronizar: primeiro envia a fila para a API, depois baixa
+// 2) Respostas feitas sem internet entram numa fila no celular.
+// 3) Ao sincronizar, primeiro envia a fila para a API e depois baixa
 //    tudo de novo (GET /api/sincronizacao) e salva no celular.
-// =====================================================================
 
-/** Envia uma resposta. Sem internet, guarda na fila e devolve 'fila'. */
+// Resultados possíveis de enviarResposta (usados também em ResponderTela).
+export const SITUACAO_ENVIO = { enviada: 'enviada', fila: 'fila' }
+
+/** Envia uma resposta. Sem internet, guarda na fila e devolve SITUACAO_ENVIO.fila. */
 export async function enviarResposta(idAtividade, texto) {
   try {
     await api.enviarResposta(idAtividade, texto)
-    return 'enviada'
+    return SITUACAO_ENVIO.enviada
   } catch (erro) {
     if (!(erro instanceof SemConexaoErro)) throw erro
     const fila = await armazenamento.lerFila()
     fila.push({ idAtividade, texto, criadaEm: new Date().toISOString() })
     await armazenamento.salvarFila(fila)
-    return 'fila'
+    return SITUACAO_ENVIO.fila
   }
 }
 

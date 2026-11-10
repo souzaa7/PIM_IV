@@ -1,7 +1,11 @@
 import { useState } from 'react'
 import { ScrollView, Text } from 'react-native'
 import { useApp } from '../contexto/AppContext'
+import { SITUACAO_ENVIO } from '../servicos/sincronizacao'
 import { Aviso, Botao, Campo, estilos } from '../componentes/Componentes'
+
+// Tempo para o aluno ler a mensagem antes de voltar à lista.
+const ESPERA_ANTES_DE_VOLTAR_MS = 1800
 
 /** UC04 - Enviar a resposta. Sem internet, a resposta fica guardada e é enviada depois. */
 export default function ResponderTela({ route, navigation }) {
@@ -18,11 +22,11 @@ export default function ResponderTela({ route, navigation }) {
       const situacao = await responder(atividade.idAtividade, texto)
       setMensagem({
         tipo: 'sucesso',
-        texto: situacao === 'enviada'
+        texto: situacao === SITUACAO_ENVIO.enviada
           ? 'Resposta enviada! Agora é só aguardar a correção.'
           : 'Você está sem internet. A resposta foi guardada e será enviada na próxima sincronização.',
       })
-      setTimeout(() => navigation.goBack(), 1800)
+      setTimeout(() => navigation.goBack(), ESPERA_ANTES_DE_VOLTAR_MS)
     } catch (e) {
       setMensagem({ tipo: 'erro', texto: e.message })
       setEnviando(false)

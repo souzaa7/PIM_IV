@@ -4,6 +4,9 @@ import StatusSincronizacao from '../componentes/StatusSincronizacao'
 import { Linha, estilos } from '../componentes/Componentes'
 import { cores } from '../tema'
 
+// Nota a partir da qual o aluno é considerado aprovado na atividade.
+const NOTA_MINIMA = 6
+
 /** UC05 - Acessar notas. */
 export default function NotasTela() {
   const { pacote } = useApp()
@@ -18,7 +21,7 @@ export default function NotasTela() {
         {media !== null && (
           <Text style={estilos.texto}>
             Média geral: <Text style={{ fontWeight: '700' }}>{media.toFixed(1).replace('.', ',')}</Text>
-            {media >= 6 ? '. Você está apto para as provas.' : '. Revise os conteúdos com nota abaixo de 6.'}
+            {media >= NOTA_MINIMA ? '. Você está apto para as provas.' : '. Revise os conteúdos com nota abaixo de ' + NOTA_MINIMA + '.'}
           </Text>
         )}
         {notas.length === 0 && <Text style={estilos.vazio}>Nenhuma atividade corrigida ainda.</Text>}
@@ -29,7 +32,7 @@ export default function NotasTela() {
                 <Text style={estilos.subtitulo}>{n.atividade}</Text>
                 <Text style={estilos.detalhe}>{n.conteudo}, corrigida em {n.dataAvaliacao}</Text>
               </View>
-              <Text style={{ fontSize: 22, fontWeight: '700', color: n.valor >= 6 ? cores.verde : cores.vermelho }}>
+              <Text style={{ fontSize: 22, fontWeight: '700', color: n.valor >= NOTA_MINIMA ? cores.verde : cores.vermelho }}>
                 {String(n.valor).replace('.', ',')}
               </Text>
             </View>

@@ -4,12 +4,14 @@ import StatusSincronizacao from '../componentes/StatusSincronizacao'
 import { Botao, Linha, estilos } from '../componentes/Componentes'
 import { cores } from '../tema'
 
+const SITUACAO_NA_FILA = 'Guardada no celular'
+
 const COR_SITUACAO = {
   Pendente: cores.caneta,
   'Aguardando correção': cores.suave,
   Avaliada: cores.verde,
   'Prazo encerrado': cores.vermelho,
-  'Guardada no celular': '#7A5B00',
+  [SITUACAO_NA_FILA]: '#7A5B00',
 }
 
 /** UC04 - Lista de atividades com a situação de cada uma. */
@@ -17,10 +19,10 @@ export default function AtividadesTela({ navigation }) {
   const { pacote, fila } = useApp()
 
   // Respostas feitas sem internet ainda não chegaram na API:
-  // marcamos essas atividades como "Guardada no celular".
+  // marcamos essas atividades como guardadas no celular.
   const naFila = fila.map((item) => item.idAtividade)
   const atividades = (pacote?.atividades ?? []).map((a) =>
-    naFila.includes(a.idAtividade) ? { ...a, situacao: 'Guardada no celular', podeEnviar: false } : a)
+    naFila.includes(a.idAtividade) ? { ...a, situacao: SITUACAO_NA_FILA, podeEnviar: false } : a)
 
   return (
     <View style={estilos.tela}>
