@@ -10,6 +10,10 @@ namespace AprenderMais.Infraestrutura.SqlServer;
 public class UsuarioRepositorioSql : IUsuarioRepositorio
 {
     private const string SelectBase = "SELECT * FROM vw_usuario_perfil";
+    // Códigos dos THROW na procedure de cadastro (database/04_procedures.sql).
+    private const int ErroEmailRepetido = 50001;
+    private const int ErroCpfRepetido = 50002;
+
     private readonly ConexaoSql _conexao;
 
     public UsuarioRepositorioSql(ConexaoSql conexao)
@@ -60,7 +64,7 @@ public class UsuarioRepositorioSql : IUsuarioRepositorio
         {
             await comando.ExecuteNonQueryAsync();
         }
-        catch (SqlException ex) when (ex.Number is 50001 or 50002)
+        catch (SqlException ex) when (ex.Number is ErroEmailRepetido or ErroCpfRepetido)
         {
             // Erros de negócio lançados pela procedure (e-mail ou CPF repetido).
             throw new DominioException(ex.MensagemDoBanco());

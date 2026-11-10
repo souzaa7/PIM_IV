@@ -8,6 +8,10 @@ namespace AprenderMais.Infraestrutura.SqlServer;
 
 public class RespostaRepositorioSql : IRespostaRepositorio
 {
+    // Códigos dos THROW em trg_resposta_validar (database/05_triggers.sql).
+    private const int ErroAtividadeEncerrada = 50020;
+    private const int ErroRespostaInvalida = 50021;
+
     private readonly ConexaoSql _conexao;
 
     public RespostaRepositorioSql(ConexaoSql conexao)
@@ -67,7 +71,7 @@ public class RespostaRepositorioSql : IRespostaRepositorio
         {
             resposta.Id = (int)(await comando.ExecuteScalarAsync())!;
         }
-        catch (SqlException ex) when (ex.Number is 50020 or 50021)
+        catch (SqlException ex) when (ex.Number is ErroAtividadeEncerrada or ErroRespostaInvalida)
         {
             // Mensagens do trigger trg_resposta_validar.
             throw new DominioException(ex.MensagemDoBanco());

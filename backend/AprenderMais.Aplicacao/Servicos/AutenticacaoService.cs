@@ -6,6 +6,7 @@ using AprenderMais.Dominio.Repositorios;
 
 namespace AprenderMais.Aplicacao.Servicos;
 
+/// <summary>Valida as credenciais e abre ou encerra a sessão do usuário.</summary>
 public class AutenticacaoService
 {
     private readonly IUsuarioRepositorio _usuarios;
@@ -19,6 +20,7 @@ public class AutenticacaoService
         _sessao = sessao;
     }
 
+    /// <exception cref="DominioException">Credenciais inválidas ou usuário inativo.</exception>
     public async Task<Usuario> EntrarAsync(string email, string senha)
     {
         if (string.IsNullOrWhiteSpace(email) || string.IsNullOrEmpty(senha))

@@ -11,6 +11,10 @@ namespace AprenderMais.Aplicacao.Servicos;
 /// <summary>Casos de uso UC02 (cadastro), UC10 (cadastrar secretaria) e UC11 (desativar cadastros).</summary>
 public class UsuarioService
 {
+    private const int TamanhoCpf = 11;
+    private const int NomeTamanhoMinimo = 2;
+    private const int SenhaTamanhoMinimo = 8;
+
     private readonly IUsuarioRepositorio _usuarios;
     private readonly IPasswordHasher _hasher;
 
@@ -108,10 +112,10 @@ public class UsuarioService
         string nome = dto.Nome.Trim();
         string email = dto.Email.Trim().ToLowerInvariant();
 
-        if (cpf.Length != 11)
-            throw new DominioException("O CPF deve conter 11 dígitos.");
+        if (cpf.Length != TamanhoCpf)
+            throw new DominioException($"O CPF deve conter {TamanhoCpf} dígitos.");
 
-        if (nome.Length < 2)
+        if (nome.Length < NomeTamanhoMinimo)
             throw new DominioException("Informe um nome válido.");
 
         try
@@ -123,8 +127,8 @@ public class UsuarioService
             throw new DominioException("Informe um e-mail válido.");
         }
 
-        if (dto.Senha.Length < 8)
-            throw new DominioException("A senha deve ter pelo menos 8 caracteres.");
+        if (dto.Senha.Length < SenhaTamanhoMinimo)
+            throw new DominioException($"A senha deve ter pelo menos {SenhaTamanhoMinimo} caracteres.");
 
         usuario.Cpf = cpf;
         usuario.Nome = nome;

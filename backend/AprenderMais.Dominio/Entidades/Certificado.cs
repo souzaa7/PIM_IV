@@ -1,5 +1,6 @@
 namespace AprenderMais.Dominio.Entidades;
 
+/// <summary>Comprovante emitido quando o aluno conclui um conteúdo.</summary>
 public class Certificado
 {
     public int Id { get; set; }

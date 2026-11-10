@@ -2,6 +2,7 @@ using AprenderMais.Aplicacao.Interfaces;
 
 namespace AprenderMais.Infraestrutura.Relogio;
 
+/// <summary>Relógio real; os prazos das atividades são comparados em horário de Brasília.</summary>
 public class RelogioSistema : IRelogio
 {
     private static readonly TimeZoneInfo FusoBrasilia = ObterFusoBrasilia();

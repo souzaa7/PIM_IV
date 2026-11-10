@@ -2,6 +2,7 @@ using AprenderMais.Dominio.Excecoes;
 
 namespace AprenderMais.Dominio.Entidades;
 
+/// <summary>Avaliação dada pela secretaria a uma resposta de aluno.</summary>
 public class Nota
 {
     public int Id { get; set; }
@@ -11,6 +12,7 @@ public class Nota
     public int IdResposta { get; set; }
     public int IdSecretaria { get; set; }
 
+    /// <param name="notaMaximaDaAtividade">Teto definido na atividade avaliada.</param>
     public void Validar(decimal notaMaximaDaAtividade)
     {
         if (Valor < 0)

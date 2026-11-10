@@ -28,6 +28,9 @@ public class ConexaoSql
 /// <summary>Pequenos atalhos para ler colunas que podem ser NULL.</summary>
 internal static class LeitorExtensoes
 {
+    private const int ErroChaveUnica = 2627;
+    private const int ErroIndiceUnico = 2601;
+
     public static string? TextoOuNulo(this SqlDataReader leitor, string coluna)
     {
         int i = leitor.GetOrdinal(coluna);
@@ -54,7 +57,7 @@ internal static class LeitorExtensoes
         ex.Errors.Count > 0 ? ex.Errors[0].Message : ex.Message;
 
     /// <summary>Erro 2627/2601: violação de UNIQUE (ex.: dois pedidos iguais ao mesmo tempo).</summary>
-    public static bool EhRegistroDuplicado(this SqlException ex) => ex.Number is 2627 or 2601;
+    public static bool EhRegistroDuplicado(this SqlException ex) => ex.Number is ErroChaveUnica or ErroIndiceUnico;
 
     /// <summary>Converte DBNull para null ao passar parâmetros.</summary>
     public static object ValorOuDbNull(object? valor) => valor ?? DBNull.Value;

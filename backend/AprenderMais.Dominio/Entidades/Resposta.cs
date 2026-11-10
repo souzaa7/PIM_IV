@@ -1,5 +1,6 @@
 namespace AprenderMais.Dominio.Entidades;
 
+/// <summary>Resposta enviada por um aluno a uma atividade.</summary>
 public class Resposta
 {
     public int Id { get; set; }

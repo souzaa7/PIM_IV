@@ -7,6 +7,9 @@ namespace AprenderMais.Infraestrutura.SqlServer;
 
 public class NotaRepositorioSql : INotaRepositorio
 {
+    /// <summary>Código do THROW em trg_nota_validar (database/05_triggers.sql).</summary>
+    private const int ErroNotaInvalida = 50010;
+
     private readonly ConexaoSql _conexao;
 
     public NotaRepositorioSql(ConexaoSql conexao)
@@ -54,7 +57,7 @@ public class NotaRepositorioSql : INotaRepositorio
         {
             nota.Id = (int)(await comando.ExecuteScalarAsync())!;
         }
-        catch (SqlException ex) when (ex.Number == 50010)
+        catch (SqlException ex) when (ex.Number == ErroNotaInvalida)
         {
             // Mensagem do trigger trg_nota_validar.
             throw new DominioException(ex.MensagemDoBanco());

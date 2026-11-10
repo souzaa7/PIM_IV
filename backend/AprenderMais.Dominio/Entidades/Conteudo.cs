@@ -2,8 +2,12 @@ using AprenderMais.Dominio.Excecoes;
 
 namespace AprenderMais.Dominio.Entidades;
 
+/// <summary>Curso ou material publicado pela secretaria e consumido pelos alunos.</summary>
 public class Conteudo
 {
+    /// <summary>Limite da coluna titulo no banco.</summary>
+    public const int TituloTamanhoMaximo = 150;
+
     public int Id { get; set; }
     public string Titulo { get; set; } = string.Empty;
     public string? Descricao { get; set; }
@@ -19,8 +23,8 @@ public class Conteudo
     {
         if (string.IsNullOrWhiteSpace(Titulo))
             throw new DominioException("O título do conteúdo é obrigatório.");
-        if (Titulo.Trim().Length > 150)
-            throw new DominioException("O título pode ter no máximo 150 caracteres.");
+        if (Titulo.Trim().Length > TituloTamanhoMaximo)
+            throw new DominioException($"O título pode ter no máximo {TituloTamanhoMaximo} caracteres.");
         if (string.IsNullOrWhiteSpace(Categoria))
             throw new DominioException("A categoria do conteúdo é obrigatória.");
         if (Aulas < 0)
