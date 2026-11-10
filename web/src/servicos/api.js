@@ -6,6 +6,9 @@
 const URL_API = import.meta.env.VITE_API_URL ?? 'http://localhost:5000'
 const CHAVE_TOKEN = 'aprendermais.token'
 
+// Evento disparado quando a API responde 401; o AuthContext escuta para limpar o usuário.
+export const EVENTO_SESSAO_EXPIRADA = 'sessao-expirada'
+
 export const token = {
   obter: () => localStorage.getItem(CHAVE_TOKEN),
   salvar: (valor) => localStorage.setItem(CHAVE_TOKEN, valor),
@@ -34,7 +37,7 @@ async function requisicao(caminho, { metodo = 'GET', corpo } = {}) {
 
   if (resposta.status === 401) {
     token.remover()
-    window.dispatchEvent(new Event('sessao-expirada'))
+    window.dispatchEvent(new Event(EVENTO_SESSAO_EXPIRADA))
     throw new Error('Sua sessão expirou. Entre novamente.')
   }
   if (resposta.status === 403) throw new Error('Seu perfil não tem acesso a esta função.')

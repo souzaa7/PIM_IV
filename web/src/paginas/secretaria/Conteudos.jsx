@@ -3,6 +3,7 @@ import { conteudos } from '../../servicos/api'
 import { useCarregar } from '../../servicos/useCarregar'
 import { Aviso, Estado } from '../../componentes/Estado'
 
+const NIVEIS = ['Iniciante', 'Intermediário', 'Avançado']
 const VAZIO = { titulo: '', descricao: '', categoria: '', nivel: 'Iniciante', duracao: '', aulas: 0 }
 
 /** UC07, UC08 e UC09 - Adicionar, editar e desativar conteúdos. */
@@ -60,16 +61,14 @@ export default function Conteudos() {
             <label>
               Nível
               <select value={formulario.nivel} onChange={alterar('nivel')}>
-                <option>Iniciante</option>
-                <option>Intermediário</option>
-                <option>Avançado</option>
+                {NIVEIS.map((nivel) => <option key={nivel}>{nivel}</option>)}
               </select>
             </label>
             <label>Duração<input value={formulario.duracao} onChange={alterar('duracao')} placeholder="10h" /></label>
             <label>Aulas<input type="number" min="0" value={formulario.aulas} onChange={alterar('aulas')} /></label>
           </div>
           <div className="acoes">
-            <button className="botao">Salvar</button>
+            <button type="submit" className="botao">Salvar</button>
             <button type="button" className="botao-texto" onClick={() => setFormulario(null)}>Cancelar</button>
           </div>
         </form>

@@ -46,7 +46,7 @@ export default function NovaAtividade() {
             <label>Nota máxima<input type="number" min="1" max="100" value={dados.notaMaxima} onChange={alterar('notaMaxima')} required /></label>
           </div>
           <Aviso mensagem={mensagem} />
-          <button className="botao">Publicar atividade</button>
+          <button type="submit" className="botao">Publicar atividade</button>
         </form>
       )}
     </section>

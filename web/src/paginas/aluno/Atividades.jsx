@@ -76,7 +76,7 @@ export default function Atividades() {
                   Link de um arquivo (opcional)
                   <input type="url" value={link} onChange={(e) => setLink(e.target.value)} placeholder="https://" />
                 </label>
-                <button className="botao">Enviar resposta</button>
+                <button type="submit" className="botao">Enviar resposta</button>
               </form>
             )}
           </li>

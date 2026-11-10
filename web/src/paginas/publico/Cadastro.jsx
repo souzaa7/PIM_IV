@@ -49,7 +49,7 @@ export default function Cadastro() {
           <input type="password" value={dados.senha} onChange={alterar('senha')} required minLength={8} autoComplete="new-password" />
         </label>
         <Aviso mensagem={mensagem} />
-        <button className="botao" disabled={enviando}>{enviando ? 'Criando conta…' : 'Criar conta'}</button>
+        <button type="submit" className="botao" disabled={enviando}>{enviando ? 'Criando conta…' : 'Criar conta'}</button>
       </form>
       <p>
         Já tem conta? <Link to="/entrar">Entrar</Link>

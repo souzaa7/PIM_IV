@@ -1,8 +1,8 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { matriculas } from '../../servicos/api'
 import { useCarregar } from '../../servicos/useCarregar'
 import { useAuth } from '../../contexto/AuthContext'
-import { useState } from 'react'
 import { Aviso, Estado, Progresso } from '../../componentes/Estado'
 
 /** Área do aluno: cursos em que está matriculado e o progresso de cada um. */

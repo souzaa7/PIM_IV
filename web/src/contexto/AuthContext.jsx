@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { autenticacao, token } from '../servicos/api'
+import { autenticacao, EVENTO_SESSAO_EXPIRADA, token } from '../servicos/api'
 
 // Guarda o usuário logado e deixa disponível para todas as telas.
 const AuthContext = createContext(null)
@@ -24,8 +24,8 @@ export function AuthProvider({ children }) {
   // A API avisa quando o token venceu (resposta 401).
   useEffect(() => {
     const aoExpirar = () => setUsuario(null)
-    window.addEventListener('sessao-expirada', aoExpirar)
-    return () => window.removeEventListener('sessao-expirada', aoExpirar)
+    window.addEventListener(EVENTO_SESSAO_EXPIRADA, aoExpirar)
+    return () => window.removeEventListener(EVENTO_SESSAO_EXPIRADA, aoExpirar)
   }, [])
 
   async function entrar(email, senha) {

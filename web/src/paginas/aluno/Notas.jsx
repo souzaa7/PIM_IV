@@ -2,6 +2,9 @@ import { notas } from '../../servicos/api'
 import { useCarregar } from '../../servicos/useCarregar'
 import { Estado } from '../../componentes/Estado'
 
+// Média a partir da qual o aluno é considerado apto.
+const MEDIA_MINIMA = 6
+
 /** UC05 - Acessar notas (boletim). */
 export default function Notas() {
   const { dados, erro, carregando } = useCarregar(notas.minhas)
@@ -16,7 +19,7 @@ export default function Notas() {
       {media !== null && (
         <p>
           Sua média geral é <strong>{media.toLocaleString('pt-BR', { maximumFractionDigits: 1 })}</strong>.
-          {media >= 6 ? ' Você está apto para as provas.' : ' Revise os conteúdos com nota abaixo de 6.'}
+          {media >= MEDIA_MINIMA ? ' Você está apto para as provas.' : ` Revise os conteúdos com nota abaixo de ${MEDIA_MINIMA}.`}
         </p>
       )}
       <Estado carregando={carregando} erro={erro} vazio={dados?.length === 0} mensagemVazio="Nenhuma atividade corrigida ainda." />

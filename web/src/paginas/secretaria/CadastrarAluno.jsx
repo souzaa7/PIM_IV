@@ -41,7 +41,7 @@ export function FormularioUsuario({ titulo, perfil, aoCadastrar }) {
         <label>E-mail de acesso<input type="email" value={dados.email} onChange={alterar('email')} required /></label>
         <label>Senha provisória<input value={dados.senha} onChange={alterar('senha')} required minLength={8} /></label>
         <Aviso mensagem={mensagem} />
-        <button className="botao">Cadastrar {perfil}</button>
+        <button type="submit" className="botao">Cadastrar {perfil}</button>
       </form>
     </section>
   )

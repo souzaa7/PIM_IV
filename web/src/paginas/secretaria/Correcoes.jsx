@@ -69,7 +69,7 @@ export default function Correcoes() {
                     Comentário para o aluno
                     <input value={feedback} onChange={(e) => setFeedback(e.target.value)} />
                   </label>
-                  <button className="botao">Salvar nota</button>
+                  <button type="submit" className="botao">Salvar nota</button>
                 </form>
               </>
             )}

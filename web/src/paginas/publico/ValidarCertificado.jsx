@@ -28,7 +28,7 @@ export default function ValidarCertificado() {
           Código do certificado
           <input value={codigo} onChange={(e) => setCodigo(e.target.value)} required />
         </label>
-        <button className="botao">Validar</button>
+        <button type="submit" className="botao">Validar</button>
       </form>
       <Aviso mensagem={mensagem} />
       {certificado && (

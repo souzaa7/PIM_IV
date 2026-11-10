@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 // Preferências de acessibilidade: tamanho da fonte e alto contraste.
 // Ficam salvas no navegador para a próxima visita.
 const TAMANHOS = [100, 115, 130]
+const CHAVE_FONTE = 'am.fonte'
+const CHAVE_CONTRASTE = 'am.contraste'
 
 function lerPreferencia(chave, padrao) {
   try {
@@ -12,18 +14,27 @@ function lerPreferencia(chave, padrao) {
   }
 }
 
+// Navegação privada ou armazenamento bloqueado pode lançar erro; a preferência só não é salva.
+function salvarPreferencia(chave, valor) {
+  try {
+    localStorage.setItem(chave, JSON.stringify(valor))
+  } catch {
+    // sem armazenamento disponível: segue sem persistir
+  }
+}
+
 export default function Acessibilidade() {
-  const [tamanho, setTamanho] = useState(() => lerPreferencia('am.fonte', 100))
-  const [contraste, setContraste] = useState(() => lerPreferencia('am.contraste', false))
+  const [tamanho, setTamanho] = useState(() => lerPreferencia(CHAVE_FONTE, TAMANHOS[0]))
+  const [contraste, setContraste] = useState(() => lerPreferencia(CHAVE_CONTRASTE, false))
 
   useEffect(() => {
     document.documentElement.style.fontSize = `${tamanho}%`
-    localStorage.setItem('am.fonte', JSON.stringify(tamanho))
+    salvarPreferencia(CHAVE_FONTE, tamanho)
   }, [tamanho])
 
   useEffect(() => {
     document.documentElement.dataset.contraste = contraste ? 'alto' : 'normal'
-    localStorage.setItem('am.contraste', JSON.stringify(contraste))
+    salvarPreferencia(CHAVE_CONTRASTE, contraste)
   }, [contraste])
 
   const indice = TAMANHOS.indexOf(tamanho)

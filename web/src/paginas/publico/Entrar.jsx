@@ -41,7 +41,7 @@ export default function Entrar() {
           <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required autoComplete="current-password" />
         </label>
         <Aviso mensagem={mensagem} />
-        <button className="botao" disabled={enviando}>{enviando ? 'Entrando…' : 'Entrar'}</button>
+        <button type="submit" className="botao" disabled={enviando}>{enviando ? 'Entrando…' : 'Entrar'}</button>
       </form>
       <p>
         Ainda não tem conta? <Link to="/cadastro">Cadastre-se</Link>

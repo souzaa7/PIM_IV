@@ -4,6 +4,7 @@ import { useCarregar } from '../../servicos/useCarregar'
 import { useAuth, rotaInicial } from '../../contexto/AuthContext'
 import { Estado } from '../../componentes/Estado'
 
+/** Página inicial: apresentação da plataforma e vitrine de cursos. */
 export default function Inicio() {
   const { usuario } = useAuth()
   const { dados, erro, carregando } = useCarregar(conteudos.listarAtivos)

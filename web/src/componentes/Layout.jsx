@@ -27,6 +27,7 @@ const MENUS = {
   ],
 }
 
+/** Estrutura comum das páginas: topo com menu do perfil, conteúdo e rodapé. */
 export default function Layout() {
   const { usuario, sair } = useAuth()
   const navegar = useNavigate()
