@@ -142,6 +142,6 @@ Scrum com sprints de **1 semana**, de 01/09/2026 a 23/11/2026. O backlog complet
 | S7 | 13/10 – 19/10 | Site React: secretaria, administração, relatórios e acessibilidade | ✅ Concluída |
 | S8 | 20/10 – 26/10 | App mobile: telas, navegação e sincronização offline | ✅ Concluída |
 | S9 | 27/10 – 02/11 | Desktop WinForms, diagramas de atividade, Docker e CI | ✅ Concluída |
-| S10 | 03/11 – 09/11 | Testes integrados com SQL Server e homologação com usuários | Em andamento |
+| S10 | 03/11 – 09/11 | Testes integrados com SQL Server e homologação com usuários | ✅ Concluída |
 | S11 | 10/11 – 12/11 | Documento final em ABNT | Em andamento |
 | S12 | 17/11 – 23/11 | Revisão, apresentação e entrega na UNIP | ⏳ Planejada |
